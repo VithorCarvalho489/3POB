@@ -1,0 +1,138 @@
+Exercício 1: Par ou Ímpar
+
+Java
+import java.util.Scanner;
+
+public class Exercício1 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite um número inteiro: ");
+        int numero = scanner.nextInt();
+
+        if (numero % 2 == 0) {
+            System.out.println("O número é Par.");
+        } else {
+            System.out.println("O número é Ímpar.");
+        }
+
+        scanner.close();
+    }
+}
+Exercício 2: Validador de Maioridade
+
+Java
+import java.util.Scanner;
+
+public class Exercício2 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite o ano de nascimento: ");
+        int anoNascimento = scanner.nextInt();
+
+        System.out.print("Digite o ano atual: ");
+        int anoAtual = scanner.nextInt();
+
+        int idade = anoAtual - anoNascimento;
+
+        if (idade >= 18) {
+            System.out.println("Idade: " + idade + " anos. É maior de idade.");
+        } else {
+            System.out.println("Idade: " + idade + " anos. É menor de idade.");
+        }
+
+        scanner.close();
+    }
+}
+Exercício 3: Situação do Aluno
+
+Java
+import java.util.Scanner;
+
+public class Exercício3 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite a primeira nota: ");
+        double nota1 = scanner.nextDouble();
+
+        System.out.print("Digite a segunda nota: ");
+        double nota2 = scanner.nextDouble();
+
+        double media = (nota1 + nota2) / 2;
+
+        if (media >= 7.0) {
+            System.out.printf("Média: %.1f - Aprovado\n", media);
+        } else if (media >= 5.0 && media < 7.0) {
+            System.out.printf("Média: %.1f - Em Recuperação\n", media);
+        } else {
+            System.out.printf("Média: %.1f - Reprovado\n", media);
+        }
+
+        scanner.close();
+    }
+}
+Exercício 4: O Maior de Três Números
+
+Java
+import java.util.Scanner;
+
+public class Exercício4 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite o primeiro número: ");
+        int num1 = scanner.nextInt();
+
+        System.out.print("Digite o segundo número: ");
+        int num2 = scanner.nextInt();
+
+        System.out.print("Digite o terceiro número: ");
+        int num3 = scanner.nextInt();
+
+        if (num1 >= num2 && num1 >= num3) {
+            System.out.println("O maior número é: " + num1);
+        } else if (num2 >= num1 && num2 >= num3) {
+            System.out.println("O maior número é: " + num2);
+        } else {
+            System.out.println("O maior número é: " + num3);
+        }
+
+        scanner.close();
+    }
+}
+Exercício 5: Classificação de Triângulos
+
+Java
+import java.util.Scanner;
+
+public class Exercício5 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite o lado A: ");
+        double a = scanner.nextDouble();
+
+        System.out.print("Digite o lado B: ");
+        double b = scanner.nextDouble();
+
+        System.out.print("Digite o lado C: ");
+        double c = scanner.nextDouble();
+
+        // Validação da existência do triângulo
+        if (a + b > c && a + c > b && b + c > a) {
+            if (a == b && b == c) {
+                System.out.println("Triângulo Equilátero");
+            } else if (a == b || a == c || b == c) {
+                System.out.println("Triângulo Isósceles");
+            } else {
+                System.out.println("Triângulo Escaleno");
+            }
+        } else {
+            System.out.println("Erro: Os lados informados não formam um triângulo válido.");
+        }
+
+        scanner.close();
+    }
+}
