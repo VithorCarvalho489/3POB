@@ -1,0 +1,126 @@
+Exercício 1: Calculadora de Média Simples
+
+Java
+import java.util.Scanner;
+
+public class Exercício1 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite a primeira nota: ");
+        double nota1 = scanner.nextDouble();
+
+        System.out.print("Digite a segunda nota: ");
+        double nota2 = scanner.nextDouble();
+
+        System.out.print("Digite a terceira nota: ");
+        double nota3 = scanner.nextDouble();
+
+        double media = (nota1 + nota2 + nota3) / 3;
+
+        System.out.printf("Média: %.2f\n", media);
+
+        scanner.close();
+    }
+}
+
+
+Exercício 2: Conversor de Temperatura
+
+Java
+import java.util.Scanner;
+
+public class Exercício2 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite a temperatura em Celsius: ");
+        double celsius = scanner.nextDouble();
+
+        double fahrenheit = (celsius * 1.8) + 32;
+
+        System.out.println("Fahrenheit: " + fahrenheit);
+
+        scanner.close();
+    }
+}
+
+
+
+
+Exercício 3: Cálculo de Salário com Desconto do INSS
+
+
+Java
+import java.util.Scanner;
+
+public class Exercício3 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite o valor da hora: ");
+        double valorHora = scanner.nextDouble();
+
+        System.out.print("Digite as horas trabalhadas: ");
+        double horasTrabalhadas = scanner.nextDouble();
+
+        double salarioBruto = valorHora * horasTrabalhadas;
+        double inss = salarioBruto * 0.10;
+        double salarioLiquido = salarioBruto - inss;
+
+        System.out.printf("Salário Bruto: R$ %.2f\n", salarioBruto);
+        System.out.printf("Salário Líquido: R$ %.2f\n", salarioLiquido);
+
+        scanner.close();
+    }
+}
+
+
+Exercício 4: Área e Perímetro de um Retângulo
+
+Java
+import java.util.Scanner;
+
+public class Exercício4 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite a base: ");
+        double base = scanner.nextDouble();
+
+        System.out.print("Digite a altura: ");
+        double altura = scanner.nextDouble();
+
+        double area = base * altura;
+        double perimetro = 2 * (base + altura);
+
+        System.out.println("Área: " + area);
+        System.out.println("Perímetro: " + perimetro);
+
+        scanner.close();
+    }
+}
+
+Exercício 5: Conversor de Tempo
+
+Java
+import java.util.Scanner;
+
+public class Exercício5 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite o total de segundos: ");
+        int totalSegundos = scanner.nextInt();
+
+        int horas = totalSegundos / 3600;
+        int resto = totalSegundos % 3600;
+
+        int minutos = resto / 60;
+        int segundos = resto % 60;
+
+        System.out.println(horas + " hora(s), " + minutos + " minuto(s) e " + segundos + " segundo(s)");
+
+        scanner.close();
+    }
+}
