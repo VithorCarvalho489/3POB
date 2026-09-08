@@ -1,0 +1,148 @@
+Exercício 1: Tabuada de um Número (for)
+
+Java
+import java.util.Scanner;
+
+public class Exercício1 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite um número inteiro: ");
+        int numero = scanner.nextInt();
+
+        System.out.println("Tabuada do " + numero + ":");
+        for (int i = 1; i <= 10; i++) {
+            int resultado = numero * i;
+            System.out.println(numero + " x " + i + " = " + resultado);
+        }
+
+        scanner.close();
+    }
+}
+
+
+Exercício 2: Somatório e Média até Flag de Parada (while)
+
+Java
+import java.util.Scanner;
+
+public class Exercício2 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        int soma = 0;
+        int quantidade = 0;
+
+        System.out.print("Digite um número positivo (ou negativo para sair): ");
+        int numero = scanner.nextInt();
+
+        while (numero >= 0) {
+            soma += numero;
+            quantidade++;
+
+            System.out.print("Digite outro número (ou negativo para sair): ");
+            numero = scanner.nextInt();
+        }
+
+        if (quantidade > 0) {
+            double media = (double) soma / quantidade;
+            System.out.println("\nQuantidade de números: " + quantidade);
+            System.out.println("Soma total: " + soma);
+            System.out.printf("Média: %.2f\n", media);
+        } else {
+            System.out.println("\nNenhum número positivo foi digitado.");
+        }
+
+        scanner.close();
+    }
+}
+
+
+
+Exercício 3: Validação de Entrada com Senha (do-while)
+
+Java
+import java.util.Scanner;
+
+public class Exercício3 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        final int SENHA_CORRETA = 2026;
+        int senhaDigitada;
+
+        do {
+            System.out.print("Digite a senha: ");
+            senhaDigitada = scanner.nextInt();
+
+            if (senhaDigitada != SENHA_CORRETA) {
+                System.out.println("Senha Incorreta! Tente novamente.");
+            }
+        } while (senhaDigitada != SENHA_CORRETA);
+
+        System.out.println("Acesso Permitido!");
+
+        scanner.close();
+    }
+}
+
+
+Exercício 4: Contagem de Números Pares e Ímpares em um Intervalo (for)
+
+Java
+import java.util.Scanner;
+
+public class Exercício4 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite o limite inferior (A): ");
+        int a = scanner.nextInt();
+
+        System.out.print("Digite o limite superior (B): ");
+        int b = scanner.nextInt();
+
+        int pares = 0;
+        int impares = 0;
+
+        for (int i = a; i <= b; i++) {
+            if (i % 2 == 0) {
+                pares++;
+            } else {
+                impares++;
+            }
+        }
+
+        System.out.println("Quantidade de pares: " + pares);
+        System.out.println("Quantidade de ímpares: " + impares);
+
+        scanner.close();
+    }
+}
+
+Exercício 5: Cálculo do Fatorial de um Número (for)
+
+Java
+import java.util.Scanner;
+
+public class Exercício5 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite um número não negativo: ");
+        int n = scanner.nextInt();
+
+        if (n < 0) {
+            System.out.println("Não existe fatorial para números negativos.");
+        } else {
+            long fatorial = 1;
+
+            for (int i = 1; i <= n; i++) {
+                fatorial *= i;
+            }
+
+            System.out.println(n + "! = " + fatorial);
+        }
+
+        scanner.close();
+    }
+}
