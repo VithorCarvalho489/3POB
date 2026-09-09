@@ -1,0 +1,182 @@
+Exercício 1: Armazenamento e Leitura Inversa
+
+Java
+import java.util.Scanner;
+
+public class Exercício1 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int[] numeros = new int[5];
+
+        for (int i = 0; i < numeros.length; i++) {
+            System.out.print("Digite o " + (i + 1) + "º número: ");
+            numeros[i] = scanner.nextInt();
+        }
+
+        System.out.println("\nElementos na ordem inversa:");
+        for (int i = numeros.length - 1; i >= 0; i--) {
+            System.out.println(numeros[i]);
+        }
+
+        scanner.close();
+    }
+}
+Exercício 2: Maior, Menor e suas Posições
+
+Java
+import java.util.Scanner;
+
+public class Exercício2 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int[] numeros = new int[10];
+
+        for (int i = 0; i < numeros.length; i++) {
+            System.out.print("Digite o " + (i + 1) + "º número: ");
+            numeros[i] = scanner.nextInt();
+        }
+
+        int maior = numeros[0];
+        int posicaoMaior = 0;
+        int menor = numeros[0];
+        int posicaoMenor = 0;
+
+        for (int i = 1; i < numeros.length; i++) {
+            if (numeros[i] > maior) {
+                maior = numeros[i];
+                posicaoMaior = i;
+            }
+            if (numeros[i] < menor) {
+                menor = numeros[i];
+                posicaoMenor = i;
+            }
+        }
+
+        System.out.println("\nMaior valor: " + maior + " (Índice: " + posicaoMaior + ")");
+        System.out.println("Menor valor: " + menor + " (Índice: " + posicaoMenor + ")");
+
+        scanner.close();
+    }
+}
+Exercício 3: Média da Turma e Alunos Acima da Média
+
+Java
+import java.util.Scanner;
+
+public class Exercício3 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        double[] notas = new double[8];
+        double soma = 0;
+
+        for (int i = 0; i < notas.length; i++) {
+            System.out.print("Digite a nota do " + (i + 1) + "º aluno: ");
+            notas[i] = scanner.nextDouble();
+            soma += notas[i];
+        }
+
+        double media = soma / notas.length;
+        System.out.printf("\nMédia da turma: %.2f\n", media);
+
+        System.out.println("Notas acima da média:");
+        for (int i = 0; i < notas.length; i++) {
+            if (notas[i] > media) {
+                System.out.println("Aluno " + (i + 1) + ": " + notas[i]);
+            }
+        }
+
+        scanner.close();
+    }
+}
+Exercício 4: Busca Linear de Elemento
+
+Java
+import java.util.Scanner;
+
+public class Exercício4 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int[] numeros = new int[6];
+
+        for (int i = 0; i < numeros.length; i++) {
+            System.out.print("Digite o " + (i + 1) + "º número: ");
+            numeros[i] = scanner.nextInt();
+        }
+
+        System.out.print("\nDigite o número que deseja buscar (X): ");
+        int x = scanner.nextInt();
+
+        boolean encontrado = false;
+        int posicaoEncontrada = -1;
+
+        for (int i = 0; i < numeros.length; i++) {
+            if (numeros[i] == x) {
+                encontrado = true;
+                posicaoEncontrada = i;
+                break; // Interrompe a busca no primeiro que encontrar
+            }
+        }
+
+        if (encontrado) {
+            System.out.println("O número " + x + " foi encontrado no índice " + posicaoEncontrada + ".");
+        } else {
+            System.out.println("O número " + x + " não está presente no vetor.");
+        }
+
+        scanner.close();
+    }
+}
+Exercício 5: Separação em Vetores de Pares e Ímpares
+
+Java
+import java.util.Scanner;
+
+public class Exercício5 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int[] numeros = new int[10];
+
+        int qtdPares = 0;
+        int qtdImpares = 0;
+
+        for (int i = 0; i < numeros.length; i++) {
+            System.out.print("Digite o " + (i + 1) + "º número: ");
+            numeros[i] = scanner.nextInt();
+
+            if (numeros[i] % 2 == 0) {
+                qtdPares++;
+            } else {
+                qtdImpares++;
+            }
+        }
+
+        int[] pares = new int[qtdPares];
+        int[] impares = new int[qtdImpares];
+
+        int idxPar = 0;
+        int idxImpar = 0;
+
+        for (int i = 0; i < numeros.length; i++) {
+            if (numeros[i] % 2 == 0) {
+                pares[idxPar] = numeros[i];
+                idxPar++;
+            } else {
+                impares[idxImpar] = numeros[i];
+                idxImpar++;
+            }
+        }
+
+        System.out.print("\nNúmeros pares: ");
+        for (int i = 0; i < pares.length; i++) {
+            System.out.print(pares[i] + " ");
+        }
+
+        System.out.print("\nNúmeros ímpares: ");
+        for (int i = 0; i < impares.length; i++) {
+            System.out.print(impares[i] + " ");
+        }
+        System.out.println();
+
+        scanner.close();
+    }
+}
