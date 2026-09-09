@@ -1,0 +1,192 @@
+Exercício 1: Modelagem da Classe Livro
+
+Java
+// Archivo: Livro.java
+public class Livro {
+    String titulo;
+    String autor;
+    int numeroPaginas;
+
+    void exibirInformacoes() {
+        System.out.println("Título: " + titulo);
+        System.out.println("Autor: " + autor);
+        System.out.println("Página(s): " + numeroPaginas);
+        System.out.println("-------------------------");
+    }
+}
+
+// Archivo: Main.java
+public class Main {
+    public static void main(String[] args) {
+        Livro livro1 = new Livro();
+        livro1.titulo = "Dom Casmurro";
+        livro1.autor = "Machado de Assis";
+        livro1.numeroPaginas = 256;
+
+        Livro livro2 = new Livro();
+        livro2.titulo = "O Hobbit";
+        livro2.autor = "J.R.R. Tolkien";
+        livro2.numeroPaginas = 310;
+
+        livro1.exibirInformacoes();
+        livro2.exibirInformacoes();
+    }
+}
+Exercício 2: Classe Circulo e Métodos com Retorno de Valor
+
+Java
+import java.util.Scanner;
+
+// Archivo: Circulo.java
+public class Circulo {
+    double raio;
+
+    double calcularArea() {
+        return Math.PI * Math.pow(raio, 2);
+    }
+
+    double calcularPerimetro() {
+        return 2 * Math.PI * raio;
+    }
+}
+
+// Archivo: Main.java
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Circulo c = new Circulo();
+
+        System.out.print("Digite o valor do raio do círculo: ");
+        c.raio = scanner.nextDouble();
+
+        System.out.printf("Área: %.2f\n", c.calcularArea());
+        System.out.printf("Perímetro: %.2f\n", c.calcularPerimetro());
+
+        scanner.close();
+    }
+}
+Exercício 3: Classe ContaBancaria com Parâmetros e Validações
+
+Java
+// Archivo: ContaBancaria.java
+public class ContaBancaria {
+    String titular;
+    String numeroConta;
+    double saldo = 0;
+
+    void depositar(double valor) {
+        if (valor > 0) {
+            saldo += valor;
+            System.out.println("Depósito de R$ " + valor + " realizado.");
+        } else {
+            System.out.println("Valor de depósito inválido.");
+        }
+    }
+
+    void sacar(double valor) {
+        if (valor > 0 && saldo >= valor) {
+            saldo -= valor;
+            System.out.println("Saque de R$ " + valor + " realizado.");
+        } else {
+            System.out.println("Saldo insuficiente ou valor inválido.");
+        }
+    }
+
+    void consultarSaldo() {
+        System.out.printf("Saldo atual da conta (%s): R$ %.2f\n", numeroConta, saldo);
+    }
+}
+
+// Archivo: Main.java
+public class Main {
+    public static void main(String[] args) {
+        ContaBancaria conta = new ContaBancaria();
+        conta.titular = "Vithor";
+        conta.numeroConta = "12345-6";
+
+        conta.consultarSaldo();
+        conta.depositar(500.0);
+        conta.sacar(200.0);
+        conta.sacar(400.0); // Tentativa com saldo insuficiente
+        conta.consultarSaldo();
+    }
+}
+Exercício 4: Classe Funcionario com Métodos de Aumento Percentual
+
+Java
+// Archivo: Funcionario.java
+public class Funcionario {
+    String nome;
+    String cargo;
+    double salarioBruto;
+
+    void aplicarAumento(double porcentagem) {
+        salarioBruto += salarioBruto * (porcentagem / 100);
+    }
+
+    double calcularSalarioLiquido(double descontoImposto) {
+        return salarioBruto - descontoImposto;
+    }
+}
+
+// Archivo: Main.java
+public class Main {
+    public static void main(String[] args) {
+        Funcionario f = new Funcionario();
+        f.nome = "Carlos";
+        f.cargo = "Desenvolvedor";
+        f.salarioBruto = 4000.00;
+
+        System.out.printf("Salário Bruto Inicial: R$ %.2f\n", f.salarioBruto);
+
+        f.aplicarAumento(10); // Aumento de 10%
+        System.out.printf("Salário Bruto após 10%% de aumento: R$ %.2f\n", f.salarioBruto);
+
+        double salarioLiquido = f.calcularSalarioLiquido(300.00);
+        System.out.printf("Salário Líquido (com desconto de R$ 300): R$ %.2f\n", salarioLiquido);
+    }
+}
+Exercício 5: Classe Aluno com Cálculo de Situação Acadêmica
+
+Java
+// Archivo: Aluno.java
+public class Aluno {
+    String nome;
+    String matricula;
+    double nota1;
+    double nota2;
+
+    double calcularMedia() {
+        return (nota1 + nota2) / 2;
+    }
+
+    String verificarAprovacao() {
+        if (calcularMedia() >= 7.0) {
+            return "Aprovado";
+        } else {
+            return "Reprovado";
+        }
+    }
+
+    void imprimirBoletim() {
+        System.out.println("----- BOLETIM ESCOLAR -----");
+        System.out.println("Nome: " + nome);
+        System.out.println("Matrícula: " + matricula);
+        System.out.printf("Média Final: %.2f\n", calcularMedia());
+        System.out.println("Situação: " + verificarAprovacao());
+        System.out.println("---------------------------");
+    }
+}
+
+// Archivo: Main.java
+public class Main {
+    public static void main(String[] args) {
+        Aluno aluno = new Aluno();
+        aluno.nome = "Ana Silva";
+        aluno.matricula = "20260101";
+        aluno.nota1 = 8.5;
+        aluno.nota2 = 6.5;
+
+        aluno.imprimirBoletim();
+    }
+}
