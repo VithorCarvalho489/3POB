@@ -1,0 +1,161 @@
+Exercício 1: Preenchimento e Exibição de Matriz 3 x 3
+
+Java
+import java.util.Scanner;
+
+public class Exercício1 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int[][] matriz = new int[3][3];
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                System.out.print("Digite o valor para [" + i + "][" + j + "]: ");
+                matriz[i][j] = scanner.nextInt();
+            }
+        }
+
+        System.out.println("\nMatriz 3x3:");
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                System.out.print(matriz[i][j] + "\t");
+            }
+            System.out.println();
+        }
+
+        scanner.close();
+    }
+}
+Exercício 2: Soma dos Elementos da Diagonal Principal
+
+Java
+import java.util.Scanner;
+
+public class Exercício2 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        double[][] matriz = new double[4][4];
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                System.out.print("Digite o valor para [" + i + "][" + j + "]: ");
+                matriz[i][j] = scanner.nextDouble();
+            }
+        }
+
+        double somaDiagonal = 0;
+        for (int i = 0; i < 4; i++) {
+            somaDiagonal += matriz[i][i];
+        }
+
+        System.out.println("\nSoma da diagonal principal: " + somaDiagonal);
+
+        scanner.close();
+    }
+}
+Exercício 3: Maior Elemento e sua Localização (Linha e Coluna)
+
+Java
+import java.util.Scanner;
+
+public class Exercício3 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int[][] matriz = new int[3][4];
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                System.out.print("Digite o valor para [" + i + "][" + j + "]: ");
+                matriz[i][j] = scanner.nextInt();
+            }
+        }
+
+        int maior = matriz[0][0];
+        int linhaMaior = 0;
+        int colunaMaior = 0;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (matriz[i][j] > maior) {
+                    maior = matriz[i][j];
+                    linhaMaior = i;
+                    colunaMaior = j;
+                }
+            }
+        }
+
+        System.out.println("\nMaior elemento: " + maior);
+        System.out.println("Encontrado na Linha: " + linhaMaior + ", Coluna: " + colunaMaior);
+
+        scanner.close();
+    }
+}
+Exercício 4: Soma por Linhas
+
+Java
+import java.util.Scanner;
+
+public class Exercício4 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int[][] matriz = new int[4][3];
+        int[] somaLinhas = new int[4];
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 3; j++) {
+                System.out.print("Digite o valor para [" + i + "][" + j + "]: ");
+                matriz[i][j] = scanner.nextInt();
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
+            int soma = 0;
+            for (int j = 0; j < 3; j++) {
+                soma += matriz[i][j];
+            }
+            somaLinhas[i] = soma;
+        }
+
+        System.out.println("\nSoma de cada linha:");
+        for (int i = 0; i < somaLinhas.length; i++) {
+            System.out.println("Linha " + i + ": " + somaLinhas[i]);
+        }
+
+        scanner.close();
+    }
+}
+Exercício 5: Matriz Transposta
+
+Java
+import java.util.Scanner;
+
+public class Exercício5 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int[][] matrizA = new int[2][3];
+        int[][] matrizTransposta = new int[3][2];
+
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 3; j++) {
+                System.out.print("Digite o valor para A[" + i + "][" + j + "]: ");
+                matrizA[i][j] = scanner.nextInt();
+            }
+        }
+
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 3; j++) {
+                matrizTransposta[j][i] = matrizA[i][j];
+            }
+        }
+
+        System.out.println("\nMatriz Transposta (3x2):");
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 2; j++) {
+                System.out.print(matrizTransposta[i][j] + "\t");
+            }
+            System.out.println();
+        }
+
+        scanner.close();
+    }
+}
