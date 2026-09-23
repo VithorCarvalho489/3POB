@@ -1,0 +1,311 @@
+Exercício 1
+Veiculo.java
+public class Veiculo {
+
+    protected String marca;
+    protected String modelo;
+
+    public Veiculo(String marca, String modelo) {
+        this.marca = marca;
+        this.modelo = modelo;
+    }
+
+    public void exibirDetalhes() {
+        System.out.println("Marca: " + marca);
+        System.out.println("Modelo: " + modelo);
+    }
+}
+Carro.java
+public class Carro extends Veiculo {
+
+    private int quantidadePortas;
+
+    public Carro(String marca, String modelo, int quantidadePortas) {
+        super(marca, modelo);
+        this.quantidadePortas = quantidadePortas;
+    }
+
+    @Override
+    public void exibirDetalhes() {
+        super.exibirDetalhes();
+        System.out.println("Quantidade de portas: " + quantidadePortas);
+    }
+}
+Moto.java
+public class Moto extends Veiculo {
+
+    private int cilindradas;
+
+    public Moto(String marca, String modelo, int cilindradas) {
+        super(marca, modelo);
+        this.cilindradas = cilindradas;
+    }
+
+    @Override
+    public void exibirDetalhes() {
+        super.exibirDetalhes();
+        System.out.println("Cilindradas: " + cilindradas);
+    }
+}
+Exercício 2
+Funcionario.java
+public class Funcionario {
+
+    protected String nome;
+    protected double salarioBase;
+
+    public Funcionario(String nome, double salarioBase) {
+        this.nome = nome;
+        this.salarioBase = salarioBase;
+    }
+
+    public double calcularSalario() {
+        return salarioBase;
+    }
+}
+Gerente.java
+public class Gerente extends Funcionario {
+
+    private double bonusFixo;
+
+    public Gerente(String nome, double salarioBase, double bonusFixo) {
+        super(nome, salarioBase);
+        this.bonusFixo = bonusFixo;
+    }
+
+    @Override
+    public double calcularSalario() {
+        return salarioBase + bonusFixo;
+    }
+}
+Vendedor.java
+public class Vendedor extends Funcionario {
+
+    private double totalVendas;
+    private double comissaoPercentual;
+
+    public Vendedor(String nome, double salarioBase, double totalVendas, double comissaoPercentual) {
+        super(nome, salarioBase);
+        this.totalVendas = totalVendas;
+        this.comissaoPercentual = comissaoPercentual;
+    }
+
+    @Override
+    public double calcularSalario() {
+        double comissao = totalVendas * comissaoPercentual / 100;
+        return salarioBase + comissao;
+    }
+}
+Main.java
+public class Main {
+
+    public static void main(String[] args) {
+
+        Funcionario[] funcionarios = {
+            new Funcionario("Carlos", 2000),
+            new Gerente("João", 4000, 1000),
+            new Vendedor("Pedro", 2000, 10000, 5)
+        };
+
+        double folhaTotal = 0;
+
+        for (Funcionario funcionario : funcionarios) {
+            folhaTotal += funcionario.calcularSalario();
+        }
+
+        System.out.println("Folha total: R$ " + folhaTotal);
+    }
+}
+Exercício 3
+Notificacao.java
+public class Notificacao {
+
+    protected String destinatario;
+
+    public Notificacao(String destinatario) {
+        this.destinatario = destinatario;
+    }
+
+    public void enviar(String mensagem) {
+        System.out.println("Enviando notificação para " + destinatario + ": " + mensagem);
+    }
+
+    public static void processarEnvio(Notificacao notificacao, String texto) {
+        notificacao.enviar(texto);
+    }
+}
+EmailNotificacao.java
+public class EmailNotificacao extends Notificacao {
+
+    public EmailNotificacao(String destinatario) {
+        super(destinatario);
+    }
+
+    @Override
+    public void enviar(String mensagem) {
+        System.out.println("Enviando E-mail para " + destinatario + ": " + mensagem);
+    }
+}
+SmsNotificacao.java
+public class SmsNotificacao extends Notificacao {
+
+    public SmsNotificacao(String destinatario) {
+        super(destinatario);
+    }
+
+    @Override
+    public void enviar(String mensagem) {
+        System.out.println("Enviando SMS para o número " + destinatario + ": " + mensagem);
+    }
+}
+PushNotificacao.java
+public class PushNotificacao extends Notificacao {
+
+    public PushNotificacao(String destinatario) {
+        super(destinatario);
+    }
+
+    @Override
+    public void enviar(String mensagem) {
+        System.out.println("Enviando Push Notification para o dispositivo " + destinatario + ": " + mensagem);
+    }
+}
+Exercício 4
+FiguraGeometrica.java
+public class FiguraGeometrica {
+
+    public double calcularArea() {
+        return 0.0;
+    }
+}
+Quadrado.java
+public class Quadrado extends FiguraGeometrica {
+
+    private double lado;
+
+    public Quadrado(double lado) {
+        this.lado = lado;
+    }
+
+    @Override
+    public double calcularArea() {
+        return lado * lado;
+    }
+}
+Retangulo.java
+public class Retangulo extends FiguraGeometrica {
+
+    private double largura;
+    private double altura;
+
+    public Retangulo(double largura, double altura) {
+        this.largura = largura;
+        this.altura = altura;
+    }
+
+    @Override
+    public double calcularArea() {
+        return largura * altura;
+    }
+}
+Circulo.java
+public class Circulo extends FiguraGeometrica {
+
+    private double raio;
+
+    public Circulo(double raio) {
+        this.raio = raio;
+    }
+
+    @Override
+    public double calcularArea() {
+        return Math.PI * raio * raio;
+    }
+}
+Main.java
+public class Main {
+
+    public static void main(String[] args) {
+
+        FiguraGeometrica[] figuras = {
+            new Quadrado(5),
+            new Retangulo(4, 6),
+            new Circulo(3)
+        };
+
+        for (FiguraGeometrica figura : figuras) {
+            System.out.println("Área: " + figura.calcularArea());
+        }
+    }
+}
+Exercício 5
+Conta.java
+public class Conta {
+
+    protected String numero;
+    protected double saldo;
+
+    public Conta(String numero, double saldo) {
+        this.numero = numero;
+        this.saldo = saldo;
+    }
+
+    public void depositar(double valor) {
+        if (valor > 0) {
+            saldo += valor;
+        }
+    }
+
+    public void sacar(double valor) {
+        if (valor > 0 && valor <= saldo) {
+            saldo -= valor;
+        } else {
+            System.out.println("Saque inválido.");
+        }
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+}
+ContaPoupanca.java
+public class ContaPoupanca extends Conta {
+
+    private double taxaRendimento;
+
+    public ContaPoupanca(String numero, double saldo, double taxaRendimento) {
+        super(numero, saldo);
+        this.taxaRendimento = taxaRendimento;
+    }
+
+    public void aplicarRendimento() {
+        saldo += saldo * taxaRendimento / 100;
+    }
+}
+ContaCorrente.java
+public class ContaCorrente extends Conta {
+
+    private double limiteChequeEspecial;
+
+    public ContaCorrente(String numero, double saldo, double limiteChequeEspecial) {
+        super(numero, saldo);
+        this.limiteChequeEspecial = limiteChequeEspecial;
+    }
+
+    @Override
+    public void sacar(double valor) {
+
+        double taxa = 2.00;
+        double valorTotal = valor + taxa;
+
+        if (valor > 0 && saldo - valorTotal >= -limiteChequeEspecial) {
+            super.sacar(valorTotal);
+        } else {
+            System.out.println("Saque inválido.");
+        }
+    }
+}
