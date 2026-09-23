@@ -1,0 +1,205 @@
+Exercício 1
+Main.java
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Digite o primeiro número: ");
+            int numero1 = scanner.nextInt();
+
+            System.out.print("Digite o segundo número: ");
+            int numero2 = scanner.nextInt();
+
+            int resultado = numero1 / numero2;
+
+            System.out.println("Resultado: " + resultado);
+
+        } catch (ArithmeticException e) {
+            System.out.println("Erro: não é possível dividir por zero.");
+
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: digite apenas números inteiros.");
+
+        } finally {
+            System.out.println("Operação finalizada.");
+            scanner.close();
+        }
+    }
+}
+Exercício 2
+Main.java
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        String[] valores = {"10", "25", "abc", "50"};
+
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            System.out.print("Digite um índice: ");
+            int indice = scanner.nextInt();
+
+            int numero = Integer.parseInt(valores[indice]);
+
+            System.out.println("Número convertido: " + numero);
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Erro: índice inexistente.");
+
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: o valor não é um número válido.");
+
+        } finally {
+            scanner.close();
+        }
+    }
+}
+Exercício 3
+SaldoInsuficienteException.java
+public class SaldoInsuficienteException extends Exception {
+
+    public SaldoInsuficienteException(String mensagem) {
+        super(mensagem);
+    }
+}
+ContaCorrente.java
+public class ContaCorrente {
+
+    private String numero;
+    private double saldo;
+
+    public ContaCorrente(String numero, double saldo) {
+        this.numero = numero;
+        this.saldo = saldo;
+    }
+
+    public void sacar(double valor) throws SaldoInsuficienteException {
+
+        if (valor > saldo) {
+            throw new SaldoInsuficienteException(
+                "Saldo insuficiente para realizar o saque."
+            );
+        }
+
+        saldo -= valor;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+}
+Main.java
+public class Main {
+
+    public static void main(String[] args) {
+
+        ContaCorrente conta = new ContaCorrente("001", 500);
+
+        try {
+            conta.sacar(600);
+            System.out.println("Saque realizado.");
+
+        } catch (SaldoInsuficienteException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+}
+Exercício 4
+IdadeInvalidaException.java
+public class IdadeInvalidaException extends RuntimeException {
+
+    public IdadeInvalidaException(String mensagem) {
+        super(mensagem);
+    }
+}
+Eleitor.java
+public class Eleitor {
+
+    public void cadastrar(String nome, int idade) {
+
+        if (idade < 0 || idade > 130) {
+            throw new IdadeInvalidaException(
+                "Idade inválida: " + idade
+            );
+        }
+
+        System.out.println("Eleitor cadastrado: " + nome);
+    }
+}
+Main.java
+public class Main {
+
+    public static void main(String[] args) {
+
+        Eleitor eleitor = new Eleitor();
+
+        try {
+            eleitor.cadastrar("João", 20);
+            eleitor.cadastrar("Pedro", 150);
+
+        } catch (IdadeInvalidaException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+}
+Exercício 5
+ProcessamentoDadosException.java
+public class ProcessamentoDadosException extends Exception {
+
+    public ProcessamentoDadosException(String mensagem, Throwable causa) {
+        super(mensagem, causa);
+    }
+}
+Servico.java
+import java.io.IOException;
+
+public class Servico {
+
+    public void processarArquivo(String caminho) throws ProcessamentoDadosException {
+
+        try {
+
+            if (caminho == null || caminho.isEmpty()) {
+                throw new IOException("Caminho do arquivo inválido.");
+            }
+
+            if (caminho.equals("erro")) {
+                throw new Exception("Erro durante o processamento dos dados.");
+            }
+
+            System.out.println("Arquivo processado com sucesso.");
+
+        } catch (Exception e) {
+            throw new ProcessamentoDadosException(
+                "Não foi possível processar o arquivo.",
+                e
+            );
+        }
+    }
+}
+Main.java
+public class Main {
+
+    public static void main(String[] args) {
+
+        Servico servico = new Servico();
+
+        try {
+            servico.processarArquivo("");
+
+        } catch (ProcessamentoDadosException e) {
+
+            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Causa: " + e.getCause().getMessage());
+        }
+    }
+}
