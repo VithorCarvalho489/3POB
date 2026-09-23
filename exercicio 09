@@ -1,0 +1,307 @@
+Exercício 1
+MetodoPagamento.java
+public interface MetodoPagamento {
+
+    void processarPagamento(double valor);
+
+    String obterDetalhes();
+}
+CartaoCredito.java
+public class CartaoCredito implements MetodoPagamento {
+
+    private String numeroCartao;
+    private double limite;
+
+    public CartaoCredito(String numeroCartao, double limite) {
+        this.numeroCartao = numeroCartao;
+        this.limite = limite;
+    }
+
+    @Override
+    public void processarPagamento(double valor) {
+        if (valor <= limite) {
+            limite -= valor;
+            System.out.println("Pagamento com cartão realizado.");
+        } else {
+            System.out.println("Limite insuficiente.");
+        }
+    }
+
+    @Override
+    public String obterDetalhes() {
+        return "Cartão de crédito: " + numeroCartao;
+    }
+}
+Pix.java
+public class Pix implements MetodoPagamento {
+
+    private String chavePix;
+
+    public Pix(String chavePix) {
+        this.chavePix = chavePix;
+    }
+
+    @Override
+    public void processarPagamento(double valor) {
+        System.out.println("Pagamento via Pix realizado.");
+    }
+
+    @Override
+    public String obterDetalhes() {
+        return "Chave Pix: " + chavePix;
+    }
+}
+Main.java
+public class Main {
+
+    public static void finalizarCompra(MetodoPagamento metodo, double total) {
+        metodo.processarPagamento(total);
+        System.out.println(metodo.obterDetalhes());
+    }
+}
+Exercício 2
+Forma.java
+public abstract class Forma {
+
+    protected String cor;
+
+    public Forma(String cor) {
+        this.cor = cor;
+    }
+
+    public String getCor() {
+        return cor;
+    }
+
+    public abstract double calcularArea();
+
+    public void exibirCor() {
+        System.out.println("Cor da forma: " + cor);
+    }
+}
+Retangulo.java
+public class Retangulo extends Forma {
+
+    private double largura;
+    private double altura;
+
+    public Retangulo(String cor, double largura, double altura) {
+        super(cor);
+        this.largura = largura;
+        this.altura = altura;
+    }
+
+    @Override
+    public double calcularArea() {
+        return largura * altura;
+    }
+}
+Circulo.java
+public class Circulo extends Forma {
+
+    private double raio;
+
+    public Circulo(String cor, double raio) {
+        super(cor);
+        this.raio = raio;
+    }
+
+    @Override
+    public double calcularArea() {
+        return Math.PI * raio * raio;
+    }
+}
+Exercício 3
+Autenticavel.java
+public interface Autenticavel {
+
+    boolean autenticar(String senha);
+}
+ExportavelJSON.java
+public interface ExportavelJSON {
+
+    String exportarJSON();
+}
+Usuario.java
+public class Usuario implements Autenticavel {
+
+    protected String login;
+    protected String senha;
+
+    public Usuario(String login, String senha) {
+        this.login = login;
+        this.senha = senha;
+    }
+
+    @Override
+    public boolean autenticar(String senha) {
+        return this.senha.equals(senha);
+    }
+}
+Administrador.java
+public class Administrador implements Autenticavel, ExportavelJSON {
+
+    private String login;
+    private String senha;
+    private int nivelAcesso;
+
+    public Administrador(String login, String senha, int nivelAcesso) {
+        this.login = login;
+        this.senha = senha;
+        this.nivelAcesso = nivelAcesso;
+    }
+
+    @Override
+    public boolean autenticar(String senha) {
+        return this.senha.equals(senha);
+    }
+
+    @Override
+    public String exportarJSON() {
+        return "{\"login\":\"" + login + "\",\"nivelAcesso\":" + nivelAcesso + "}";
+    }
+}
+Exercício 4
+ContaBancaria.java
+public abstract class ContaBancaria {
+
+    private String numero;
+    private double saldo;
+
+    public ContaBancaria(String numero, double saldo) {
+        this.numero = numero;
+        this.saldo = saldo;
+    }
+
+    public void depositar(double valor) {
+        if (valor > 0) {
+            saldo += valor;
+        }
+    }
+
+    public double consultarSaldo() {
+        return saldo;
+    }
+
+    protected void retirarSaldo(double valor) {
+        saldo -= valor;
+    }
+
+    public abstract void cobrarTaxaMensal();
+}
+ContaCorrente.java
+public class ContaCorrente extends ContaBancaria {
+
+    public ContaCorrente(String numero, double saldo) {
+        super(numero, saldo);
+    }
+
+    @Override
+    public void cobrarTaxaMensal() {
+        retirarSaldo(15.00);
+    }
+}
+ContaEmpresarial.java
+public class ContaEmpresarial extends ContaBancaria {
+
+    public ContaEmpresarial(String numero, double saldo) {
+        super(numero, saldo);
+    }
+
+    @Override
+    public void cobrarTaxaMensal() {
+        double taxa = 30.00 + (consultarSaldo() * 0.005);
+        retirarSaldo(taxa);
+    }
+}
+Main.java
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        List<ContaBancaria> contas = new ArrayList<>();
+
+        contas.add(new ContaCorrente("001", 1000));
+        contas.add(new ContaEmpresarial("002", 5000));
+
+        for (ContaBancaria conta : contas) {
+            conta.cobrarTaxaMensal();
+        }
+    }
+}
+Exercício 5
+Tributavel.java
+public interface Tributavel {
+
+    double calcularTributo();
+}
+Item.java
+public abstract class Item {
+
+    protected int codigo;
+    protected double precoBase;
+
+    public Item(int codigo, double precoBase) {
+        this.codigo = codigo;
+        this.precoBase = precoBase;
+    }
+
+    public int getCodigo() {
+        return codigo;
+    }
+
+    public double getPrecoBase() {
+        return precoBase;
+    }
+}
+Eletronico.java
+public class Eletronico extends Item implements Tributavel {
+
+    public Eletronico(int codigo, double precoBase) {
+        super(codigo, precoBase);
+    }
+
+    @Override
+    public double calcularTributo() {
+        return precoBase * 0.15;
+    }
+}
+Alimento.java
+public class Alimento extends Item {
+
+    public Alimento(int codigo, double precoBase) {
+        super(codigo, precoBase);
+    }
+}
+Main.java
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+
+    public static double calcularTotalImpostos(List<Tributavel> itensTributaveis) {
+
+        double total = 0;
+
+        for (Tributavel item : itensTributaveis) {
+            total += item.calcularTributo();
+        }
+
+        return total;
+    }
+
+    public static void main(String[] args) {
+
+        List<Tributavel> itens = new ArrayList<>();
+
+        itens.add(new Eletronico(1, 1000));
+        itens.add(new Eletronico(2, 2000));
+
+        double total = calcularTotalImpostos(itens);
+
+        System.out.println("Total de impostos: R$ " + total);
+    }
+}
