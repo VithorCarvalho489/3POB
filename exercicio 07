@@ -1,0 +1,252 @@
+Exercício 1
+public class Produto {
+
+    private String nome;
+    private double preco;
+    private int quantidadeEstoque;
+
+    public Produto(String nome, double preco, int quantidadeEstoque) {
+        this.nome = nome;
+        setPreco(preco);
+        setQuantidadeEstoque(quantidadeEstoque);
+    }
+
+    public Produto(String nome, double preco) {
+        this.nome = nome;
+        setPreco(preco);
+        this.quantidadeEstoque = 0;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    public void setPreco(double preco) {
+        if (preco >= 0) {
+            this.preco = preco;
+        } else {
+            System.out.println("Preço não pode ser negativo.");
+        }
+    }
+
+    public int getQuantidadeEstoque() {
+        return quantidadeEstoque;
+    }
+
+    public void setQuantidadeEstoque(int quantidadeEstoque) {
+        if (quantidadeEstoque >= 0) {
+            this.quantidadeEstoque = quantidadeEstoque;
+        } else {
+            System.out.println("Estoque não pode ser negativo.");
+        }
+    }
+
+    public double calcularValorTotalEmEstoque() {
+        return preco * quantidadeEstoque;
+    }
+}
+Exercício 2
+public class ContaBancaria {
+
+    private String numeroConta;
+    private String titular;
+    private double saldo;
+
+    public ContaBancaria(String numeroConta, String titular) {
+        this.numeroConta = numeroConta;
+        this.titular = titular;
+        this.saldo = 0;
+    }
+
+    public ContaBancaria(String numeroConta, String titular, double saldoInicial) {
+        this.numeroConta = numeroConta;
+        this.titular = titular;
+
+        if (saldoInicial >= 0) {
+            this.saldo = saldoInicial;
+        } else {
+            this.saldo = 0;
+        }
+    }
+
+    public String getNumeroConta() {
+        return numeroConta;
+    }
+
+    public String getTitular() {
+        return titular;
+    }
+
+    public void setTitular(String titular) {
+        this.titular = titular;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public void depositar(double valor) {
+        if (valor > 0) {
+            saldo += valor;
+        } else {
+            System.out.println("Valor de depósito inválido.");
+        }
+    }
+
+    public void sacar(double valor) {
+        if (valor > 0 && valor <= saldo) {
+            saldo -= valor;
+        } else {
+            System.out.println("Saque inválido.");
+        }
+    }
+}
+Exercício 3
+public class Retangulo {
+
+    private double largura;
+    private double altura;
+
+    public Retangulo(double largura, double altura) {
+        setLargura(largura);
+        setAltura(altura);
+    }
+
+    public double getLargura() {
+        return largura;
+    }
+
+    public double getAltura() {
+        return altura;
+    }
+
+    public void setLargura(double largura) {
+        if (largura > 0) {
+            this.largura = largura;
+        } else {
+            this.largura = 1.0;
+            System.out.println("Largura inválida. Valor definido como 1.0.");
+        }
+    }
+
+    public void setAltura(double altura) {
+        if (altura > 0) {
+            this.altura = altura;
+        } else {
+            this.altura = 1.0;
+            System.out.println("Altura inválida. Valor definido como 1.0.");
+        }
+    }
+
+    public double calcularArea() {
+        return largura * altura;
+    }
+
+    public double calcularPerimetro() {
+        return 2 * (largura + altura);
+    }
+}
+Exercício 4
+public class Carro {
+
+    private String modelo;
+    private int ano;
+    private int velocidadeAtual;
+
+    public Carro(String modelo, int ano) {
+        this.modelo = modelo;
+        this.ano = ano;
+        this.velocidadeAtual = 0;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public int getAno() {
+        return ano;
+    }
+
+    public int getVelocidadeAtual() {
+        return velocidadeAtual;
+    }
+
+    public void acelerar(int incremento) {
+        if (incremento > 0) {
+            velocidadeAtual += incremento;
+        }
+    }
+
+    public void frear(int decremento) {
+        if (decremento > 0) {
+            velocidadeAtual -= decremento;
+
+            if (velocidadeAtual < 0) {
+                velocidadeAtual = 0;
+            }
+        }
+    }
+
+    public boolean isEmMovimento() {
+        return velocidadeAtual > 0;
+    }
+}
+Exercício 5
+public class Funcionario {
+
+    private String nome;
+    private String matricula;
+    private double salario;
+
+    public Funcionario(String nome, String matricula, double salario) {
+        this.nome = nome;
+        this.matricula = matricula;
+        this.salario = salario;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    public double getSalario() {
+        return salario;
+    }
+
+    public void setSalario(double novoSalario) {
+        if (novoSalario > salario) {
+            salario = novoSalario;
+        } else {
+            System.out.println("Erro: o novo salário deve ser maior que o salário atual.");
+        }
+    }
+
+    public void exibirDados() {
+        System.out.println("Nome: " + nome);
+        System.out.println("Matrícula: " + matricula);
+        System.out.println("Salário: R$ " + salario);
+    }
+}
