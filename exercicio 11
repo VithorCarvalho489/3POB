@@ -1,0 +1,199 @@
+Exercício 1: Gerenciamento de Lista Dinâmica de Tarefas (ArrayList)
+Java
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<String> tarefas = new ArrayList<>();
+
+        System.out.println("Digite 5 tarefas iniciais:");
+        for (int i = 0; i < 5; i++) {
+            System.out.print("Tarefa " + (i + 1) + ": ");
+            tarefas.add(scanner.nextLine());
+        }
+
+        // 2. Remover uma tarefa específica
+        System.out.print("\nDigite o nome da tarefa que deseja remover: ");
+        String tarefaRemover = scanner.nextLine();
+        if (tarefas.remove(tarefaRemover)) {
+            System.out.println("Tarefa removida com sucesso!");
+        } else {
+            System.out.println("Tarefa não encontrada.");
+        }
+
+        // 3. Verificar se uma tarefa existe
+        System.out.print("\nDigite uma tarefa para verificar se existe na lista: ");
+        String tarefaBusca = scanner.nextLine();
+        if (tarefas.contains(tarefaBusca)) {
+            System.out.println("A tarefa '" + tarefaBusca + "' está na lista.");
+        } else {
+            System.out.println("A tarefa '" + tarefaBusca + "' NÃO está na lista.");
+        }
+
+        // 4. Exibir a lista ordenada alfabeticamente
+        Collections.sort(tarefas);
+        System.out.println("\nLista de Tarefas Ordenada:");
+        for (String t : tarefas) {
+            System.out.println("- " + t);
+        }
+
+        scanner.close();
+    }
+}
+
+Exercício 2: Eliminação de Duplicatas e Operações de Conjunto (HashSet)
+Java
+
+import java.util.HashSet;
+
+public class Main {
+    public static void main(String[] args) {
+        HashSet<Integer> turmaA = new HashSet<>();
+        HashSet<Integer> turmaB = new HashSet<>();
+
+       
+        turmaA.add(101); turmaA.add(102); turmaA.add(103); turmaA.add(101); // 101 duplicado
+        turmaB.add(103); turmaB.add(104); turmaB.add(105); turmaB.add(104); // 104 duplicado
+
+       
+        HashSet<Integer> uniao = new HashSet<>(turmaA);
+        uniao.addAll(turmaB); // 1. União
+
+        HashSet<Integer> intersecao = new HashSet<>(turmaA);
+        intersecao.retainAll(turmaB); // 2. Interseção
+
+        System.out.println("Alunos da Turma A: " + turmaA);
+        System.out.println("Alunos da Turma B: " + turmaB);
+        System.out.println("\n--- Resultados ---");
+        System.out.println("Alunos matriculados nas duas turmas (União): " + uniao);
+        System.out.println("Alunos simultâneos em ambas (Interseção): " + intersecao);
+    }
+}
+
+Exercício 3: Dicionário de Frequência de Palavras (HashMap)
+Java
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite uma frase longa: ");
+        String texto = scanner.nextLine();
+
+        // Processa o texto: converte para minúsculas e divide por espaços em branco
+        String[] palavras = texto.toLowerCase().split("\\s+");
+
+        HashMap<String, Integer> frequencia = new HashMap<>();
+
+        for (String palavra : palavras) {
+            // Remove pontuação básica se houver
+            palavra = palavra.replaceAll("[^a-zá-úãõç]", "");
+            if (!palavra.isEmpty()) {
+                frequencia.put(palavra, frequencia.getOrDefault(palavra, 0) + 1);
+            }
+        }
+
+        System.out.println("\nFrequência das palavras:");
+        for (Map.Entry<String, Integer> entry : frequencia.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue() + " vez(es)");
+        }
+
+        scanner.close();
+    }
+}
+
+Exercício 4: Controle de Estoque com Consulta e Atualização (HashMap)
+Java
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Main {
+    public static void main(String[] args) {
+        HashMap<String, Integer> estoque = new HashMap<>();
+
+        // Inserir novos produtos
+        estoque.put("P001", 10);
+        estoque.put("P002", 3);
+        estoque.put("P003", 0);
+
+        // Atualizar estoque (Ex: Adicionar 5 unidades ao P001 e remover 2 do P002)
+        String codigoAtualizar = "P001";
+        if (estoque.containsKey(codigoAtualizar)) {
+            int novoValor = estoque.get(codigoAtualizar) + 5;
+            estoque.put(codigoAtualizar, novoValor);
+        }
+
+        System.out.println("--- Produtos com estoque zerado ou abaixo de 5 ---");
+        for (Map.Entry<String, Integer> entry : estoque.entrySet()) {
+            if (entry.getValue() < 5) {
+                System.out.println("Código: " + entry.getKey() + " | Quantidade: " + entry.getValue() + " (Alerta de Estoque Baixo!)");
+            } else {
+                System.out.println("Código: " + entry.getKey() + " | Quantidade: " + entry.getValue());
+            }
+        }
+    }
+}
+
+Exercício 5: Integração Completa: Agrupamento de Objetos (ArrayList + HashMap)
+Java
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+// Classe de Domínio
+class Produto {
+    private String nome;
+    private String categoria;
+    private double preco;
+
+    public Produto(String nome, String categoria, double preco) {
+        this.nome = nome;
+        this.categoria = categoria;
+        this.preco = preco;
+    }
+
+    public String getNome() { return nome; }
+    public String getCategoria() { return categoria; }
+    public double getPreco() { return preco; }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList<Produto> produtos = new ArrayList<>();
+        produtos.add(new Produto("Notebook", "Informática", 3500.00));
+        produtos.add(new Produto("Mouse", "Informática", 150.00));
+        produtos.add(new Produto("Arroz", "Alimentos", 25.00));
+        produtos.add(new Produto("Java para Iniciantes", "Livros", 89.90));
+        produtos.add(new Produto("Feijão", "Alimentos", 12.50));
+
+       
+        HashMap<String, List<Produto>> mapaCategorias = new HashMap<>();
+
+        for (Produto p : produtos) {
+            
+            mapaCategorias.putIfAbsent(p.getCategoria(), new ArrayList<>());
+            // Adiciona o produto na lista correspondente à sua categoria
+            mapaCategorias.get(p.getCategoria()).add(p);
+        }
+
+       
+        for (Map.Entry<String, List<Produto>> entry : mapaCategorias.entrySet()) {
+            System.out.println("Categoria: " + entry.getKey());
+            for (Produto p : entry.getValue()) {
+                System.out.printf("  - %s (R$ %.2f)\n", p.getNome(), p.getPreco());
+            }
+            System.out.println();
+        }
+    }
+}
