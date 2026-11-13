@@ -1,0 +1,307 @@
+Exercício 1: Testes Parametrizados e Assertions Básicas
+Java
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+import static org.junit.jupiter.api.Assertions.*;
+
+class ValidadorSenha {
+    public boolean isForte(String senha) {
+        if (senha == null || senha.length() < 8) return false;
+        boolean temDigito = false;
+        boolean temMaiuscula = false;
+        for (char c : senha.toCharArray()) {
+            if (Character.isDigit(c)) temDigito = true;
+            if (Character.isUpperCase(c)) temMaiuscula = true;
+        }
+        return temDigito && temMaiuscula;
+    }
+}
+
+class ValidadorSenhaTest {
+    private final ValidadorSenha validador = new ValidadorSenha();
+
+    @ParameterizedTest
+    @ValueSource(strings = {"SenhaForte1", "Abc123456", "Testando9X"})
+    void deveRetornarTrueParaSenhasFortes(String senha) {
+        assertTrue(validador.isForte(senha));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"curta1A", "tudomiuscula", "12345678", "SEM_NUMERO"})
+    void deveRetornarFalseParaSenhasInvalidas(String senha) {
+        assertFalse(validador.isForte(senha));
+    }
+}
+
+Exercício 2: Asserção de Exceções e Ciclo de Vida
+Java
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+class SaldoInsuficienteException extends RuntimeException {
+    public SaldoInsuficienteException(String mensagem) {
+        super(mensagem);
+    }
+}
+
+class ContaBancaria {
+    private double saldo;
+
+    public ContaBancaria(double saldo) {
+        this.saldo = saldo;
+    }
+
+    public void depositar(double valor) {
+        if (valor <= 0) throw new IllegalArgumentException("Valor inválido");
+        saldo += valor;
+    }
+
+    public void sacar(double valor) {
+        if (valor <= 0) throw new IllegalArgumentException("Valor inválido");
+        if (valor > saldo) throw new SaldoInsuficienteException("Saldo insuficiente para o saque");
+        saldo -= valor;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+}
+
+class ContaBancariaTest {
+    private ContaBancaria conta;
+
+    @BeforeEach
+    void setUp() {
+        conta = new ContaBancaria(100.0);
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoSaldoInsuficiente() {
+        SaldoInsuficienteException exception = assertThrows(
+            SaldoInsuficienteException.class,
+            () -> conta.sacar(150.0)
+        );
+        assertEquals("Saldo insuficiente para o saque", exception.getMessage());
+    }
+}
+
+Exercício 3: Mocking de Repositório e Verificação de Chamadas
+Java
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.util.Optional;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+class Usuario {
+    private Long id;
+    private String email;
+
+    public Usuario(Long id, String email) {
+        this.id = id;
+        this.email = email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+}
+
+interface UsuarioRepository {
+    Optional<Usuario> buscarPorId(Long id);
+    void salvar(Usuario u);
+}
+
+class UsuarioService {
+    private final UsuarioRepository repository;
+
+    public UsuarioService(UsuarioRepository repository) {
+        this.repository = repository;
+    }
+
+    public void atualizarEmail(Long id, String novoEmail) {
+        repository.buscarPorId(id).ifPresent(usuario -> {
+            usuario.setEmail(novoEmail);
+            repository.salvar(usuario);
+        });
+    }
+}
+
+@ExtendWith(MockitoExtension.class)
+class UsuarioServiceTest {
+    @Mock
+    private UsuarioRepository repository;
+
+    @InjectMocks
+    private UsuarioService service;
+
+    @Test
+    void deveAtualizarSalvarUsuario() {
+        Usuario usuario = new Usuario(1L, "antigo@email.com");
+        when(repository.buscarPorId(1L)).thenReturn(Optional.of(usuario));
+
+        service.atualizarEmail(1L, "novo@email.com");
+
+        verify(repository, times(1)).salvar(any(Usuario.class));
+    }
+}
+
+Exercício 4: Captura de Argumentos com ArgumentCaptor
+Java
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+
+class Usuario {
+    private String nome;
+
+    public Usuario(String nome) {
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+}
+
+interface EmailSender {
+    void enviar(String destinatario, String assunto, String corpo);
+}
+
+class NotificacaoService {
+    private final EmailSender emailSender;
+
+    public NotificacaoService(EmailSender emailSender) {
+        this.emailSender = emailSender;
+    }
+
+    public void notificarBoasVindas(Usuario usuario) {
+        String destinatario = usuario.getNome().toLowerCase() + "@email.com";
+        String assunto = "Bem-vindo ao sistema";
+        String corpo = "Olá " + usuario.getNome() + ", seja muito bem-vindo!";
+        emailSender.enviar(destinatario, assunto, corpo);
+    }
+}
+
+@ExtendWith(MockitoExtension.class)
+class NotificacaoServiceTest {
+    @Mock
+    private EmailSender emailSender;
+
+    @InjectMocks
+    private NotificacaoService service;
+
+    @Captor
+    private ArgumentCaptor<String> destinatarioCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> assuntoCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> corpoCaptor;
+
+    @Test
+    void deveEnviarEmailBoasVindas() {
+        Usuario usuario = new Usuario("Carlos");
+
+        service.notificarBoasVindas(usuario);
+
+        verify(emailSender).enviar(destinatarioCaptor.capture(), assuntoCaptor.capture(), corpoCaptor.capture());
+
+        assertTrue(assuntoCaptor.getValue().contains("Bem-vindo"));
+        assertTrue(corpoCaptor.getValue().contains("Carlos"));
+    }
+}
+
+Exercício 5: Simulação de Falhas e Validação de Fluxo Transacional
+Java
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.*;
+
+class PagamentoRecusadoException extends RuntimeException {}
+
+class Pedido {
+    private String status = "PENDENTE";
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+}
+
+interface GatewayPagamento {
+    void cobrar(double valor);
+}
+
+interface PedidoRepository {
+    void atualizar(Pedido pedido);
+}
+
+class ProcessadorPagamentoService {
+    private final GatewayPagamento gateway;
+    private final PedidoRepository repository;
+
+    public ProcessadorPagamentoService(GatewayPagamento gateway, PedidoRepository repository) {
+        this.gateway = gateway;
+        this.repository = repository;
+    }
+
+    public void processar(Pedido pedido, double valor) {
+        gateway.cobrar(valor);
+        pedido.setStatus("PAGO");
+        repository.atualizar(pedido);
+    }
+}
+
+@ExtendWith(MockitoExtension.class)
+class ProcessadorPagamentoServiceTest {
+    @Mock
+    private GatewayPagamento gateway;
+
+    @Mock
+    private PedidoRepository repository;
+
+    @InjectMocks
+    private ProcessadorPagamentoService service;
+
+    @Test
+    void naoDeveAtualizarPedidoQuandoPagamentoFalha() {
+        Pedido pedido = new Pedido();
+        doThrow(new PagamentoRecusadoException()).when(gateway).cobrar(anyDouble());
+
+        assertThrows(PagamentoRecusadoException.class, () -> service.processar(pedido, 100.0));
+
+        verify(repository, never()).atualizar(any());
+    }
+}
