@@ -1,0 +1,223 @@
+Exercício 1: Estrutura Genérica de Armazenamento (Caixa<T>)
+Java
+
+class Produto {
+    private String nome;
+
+    public Produto(String nome) {
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+}
+
+class Caixa<T> {
+    private T conteudo;
+
+    public void guardar(T elemento) {
+        this.conteudo = elemento;
+    }
+
+    public T recuperar() {
+        return conteudo;
+    }
+
+    public boolean isVazia() {
+        return conteudo == null;
+    }
+
+    public void limpar() {
+        this.conteudo = null;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Caixa<Integer> caixaInt = new Caixa<>();
+        caixaInt.guardar(42);
+        System.out.println("Caixa Integer: " + caixaInt.recuperar());
+
+        Caixa<String> caixaStr = new Caixa<>();
+        caixaStr.guardar("Programação Java");
+        System.out.println("Caixa String: " + caixaStr.recuperar());
+
+        Caixa<Produto> caixaProd = new Caixa<>();
+        caixaProd.guardar(new Produto("Notebook Gamer"));
+        System.out.println("Caixa Produto: " + caixaProd.recuperar().getNome());
+    }
+}
+
+Exercício 2: Classe Genérica com Múltiplos Parâmetros de Tipo (Par<K, V>)
+Java
+
+import java.util.Objects;
+
+class Par<K, V> {
+    private final K chave;
+    private final V valor;
+
+    public Par(K chave, V valor) {
+        this.chave = chave;
+        this.valor = valor;
+    }
+
+    public K getChave() {
+        return chave;
+    }
+
+    public V getValor() {
+        return valor;
+    }
+
+    @Override
+    public String toString() {
+        return "[Chave: " + chave + ", Valor: " + valor + "]";
+    }
+
+    public static <K, V> boolean saoIguais(Par<K, V> p1, Par<K, V> p2) {
+        if (p1 == p2) return true;
+        if (p1 == null || p2 == null) return false;
+        return Objects.equals(p1.chave, p2.chave) && Objects.equals(p1.valor, p2.valor);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Par<Integer, String> p1 = new Par<>(1, "Ativo");
+        Par<Integer, String> p2 = new Par<>(1, "Ativo");
+
+        System.out.println(p1);
+        System.out.println("São iguais? " + Par.saoIguais(p1, p2));
+    }
+}
+
+Exercício 3: Limite Superior com Bounded Type Parameter (<T Number extends>)
+Java
+
+import java.util.ArrayList;
+import java.util.List;
+
+class CalculadoraEstatistica<T extends Number> {
+    private List<T> elementos = new ArrayList<>();
+
+    public void adicionar(T numero) {
+        elementos.add(numero);
+    }
+
+    public double calcularMedia() {
+        if (elementos.isEmpty()) return 0.0;
+        double soma = 0.0;
+        for (T elemento : elementos) {
+            soma += elemento.doubleValue();
+        }
+        return soma / elementos.size();
+    }
+
+    public double calcularMaior() {
+        if (elementos.isEmpty()) return 0.0;
+        double maior = elementos.get(0).doubleValue();
+        for (T elemento : elementos) {
+            if (elemento.doubleValue() > maior) {
+                maior = elemento.doubleValue();
+            }
+        }
+        return maior;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        CalculadoraEstatistica<Integer> calcInt = new CalculadoraEstatistica<>();
+        calcInt.adicionar(10);
+        calcInt.adicionar(25);
+        calcInt.adicionar(5);
+
+        System.out.println("Média (Integer): " + calcInt.calcularMedia());
+        System.out.println("Maior (Integer): " + calcInt.calcularMaior());
+
+        CalculadoraEstatistica<Double> calcDouble = new CalculadoraEstatistica<>();
+        calcDouble.adicionar(5.5);
+        calcDouble.adicionar(12.3);
+
+        System.out.println("Média (Double): " + calcDouble.calcularMedia());
+        System.out.println("Maior (Double): " + calcDouble.calcularMaior());
+    }
+}
+
+Exercício 4: Covariância e Leitura com Upper Bounded Wildcard (? extends T)
+Java
+
+import java.util.List;
+
+abstract class Figura {
+    public abstract double calcularArea();
+}
+
+class Quadrado extends Figura {
+    private double lado;
+
+    public Quadrado(double lado) {
+        this.lado = lado;
+    }
+
+    @Override
+    public double calcularArea() {
+        return lado * lado;
+    }
+}
+
+class Circulo extends Figura {
+    private double raio;
+
+    public Circulo(double raio) {
+        this.raio = raio;
+    }
+
+    @Override
+    public double calcularArea() {
+        return Math.PI * raio * raio;
+    }
+}
+
+public class Main {
+    public static double somarAreas(List<? extends Figura> listaFiguras) {
+        double total = 0.0;
+        for (Figura f : listaFiguras) {
+            total += f.calcularArea();
+        }
+        return total;
+    }
+
+    public static void main(String[] args) {
+        List<Quadrado> quadrados = List.of(new Quadrado(2.0), new Quadrado(3.0));
+        List<Circulo> circulos = List.of(new Circulo(1.0));
+
+        System.out.println("Área total dos quadrados: " + somarAreas(quadrados));
+        System.out.println("Área total dos círculos: " + somarAreas(circulos));
+    }
+}
+
+Exercício 5: Contravariância e Inserção com Lower Bounded Wildcard (? super T)
+Java
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+    public static <T> void copiarElementos(List<? extends T> origem, List<? super T> destino) {
+        for (T elemento : origem) {
+            destino.add(elemento);
+        }
+    }
+
+    public static void main(String[] args) {
+        List<Integer> origem = List.of(10, 20, 30, 40);
+        List<Number> destino = new ArrayList<>();
+
+        copiarElementos(origem, destino);
+
+        System.out.println("Elementos copiados para o destino: " + destino);
+    }
+}
