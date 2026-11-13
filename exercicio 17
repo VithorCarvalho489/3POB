@@ -1,0 +1,200 @@
+Exercício 1: Conexão e Inserção Segura com Recuperação de ID Gerado
+Java
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class Exercicio1 {
+    public void inserirCliente(Connection conn, String nome, String email) {
+        String sql = "INSERT INTO clientes (nome, email) VALUES (?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, nome);
+            pstmt.setString(2, email);
+            int linhasAfetadas = pstmt.executeUpdate();
+            if (linhasAfetadas > 0) {
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        long idGerado = generatedKeys.getLong(1);
+                        System.out.println("Cliente inserido com sucesso. ID gerado: " + idGerado);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+Exercício 2: Consulta Parametrizada e Mapeamento para Objetos (ResultSet)
+Java
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+class Produto {
+    private Long id;
+    private String nome;
+    private Double preco;
+    private Integer estoque;
+
+    public Produto(Long id, String nome, Double preco, Integer estoque) {
+        this.id = id;
+        this.nome = nome;
+        this.preco = preco;
+        this.estoque = estoque;
+    }
+
+    public Long getId() { return id; }
+    public String getNome() { return nome; }
+    public Double getPreco() { return preco; }
+    public Integer getEstoque() { return estoque; }
+}
+
+public class Exercicio2 {
+    public List<Produto> buscarPorFaixaPreco(Connection conn, double min, double max) {
+        List<Produto> produtos = new ArrayList<>();
+        String sql = "SELECT id, nome, preco, estoque FROM produtos WHERE preco BETWEEN ? AND ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setDouble(1, min);
+            pstmt.setDouble(2, max);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Long id = rs.getLong("id");
+                    String nome = rs.getString("nome");
+                    Double preco = rs.getDouble("preco");
+                    Integer estoque = rs.getInt("estoque");
+                    produtos.add(new Produto(id, nome, preco, estoque));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return produtos;
+    }
+}
+
+Exercício 3: Atualização e Deleção com Verificação de Linhas Afetadas
+Java
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class Exercicio3 {
+    public void atualizarSalario(Connection conn, Long id, double novoSalario) {
+        String sql = "UPDATE funcionarios SET salario = ? WHERE id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setDouble(1, novoSalario);
+            pstmt.setLong(2, id);
+            int linhasAfetadas = pstmt.executeUpdate();
+            if (linhasAfetadas == 0) {
+                System.out.println("Nenhum registro encontrado com o ID informado.");
+            } else {
+                System.out.println("Salário atualizado com sucesso.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deletarPorId(Connection conn, Long id) {
+        String sql = "DELETE FROM funcionarios WHERE id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+            int linhasAfetadas = pstmt.executeUpdate();
+            if (linhasAfetadas == 0) {
+                System.out.println("Nenhum registro encontrado com o ID informado.");
+            } else {
+                System.out.println("Funcionário deletado com sucesso.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+Exercício 4: Inserção em Lote com Alta Performance (addBatch e executeBatch)
+Java
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
+
+public class Exercicio4 {
+    public void inserirLoteLog(Connection conn, List<String> mensagensLog) {
+        String sql = "INSERT INTO logs_sistema (mensagem, data_registro) VALUES (?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for (String mensagem : mensagensLog) {
+                pstmt.setString(1, mensagem);
+                pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+                pstmt.addBatch();
+            }
+            pstmt.executeBatch();
+            System.out.println("Lote de logs inserido com sucesso.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+Exercício 5: Controle Transacional e Rollback Manual (commit / rollback)
+Java
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class Exercicio5 {
+    public void transferirFundos(Connection conn, Long idOrigem, Long idDestino, double valor) {
+        String sqlDebito = "UPDATE contas SET saldo = saldo - ? WHERE id = ?";
+        String sqlCredito = "UPDATE contas SET saldo = saldo + ? WHERE id = ?";
+
+        try {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement pstmtDebito = conn.prepareStatement(sqlDebito);
+                 PreparedStatement pstmtCredito = conn.prepareStatement(sqlCredito)) {
+
+                pstmtDebito.setDouble(1, valor);
+                pstmtDebito.setLong(2, idOrigem);
+                int linhasDebito = pstmtDebito.executeUpdate();
+
+                if (linhasDebito == 0) {
+                    throw new SQLException("Conta de origem não encontrada.");
+                }
+
+                pstmtCredito.setDouble(1, valor);
+                pstmtCredito.setLong(2, idDestino);
+                int linhasCredito = pstmtCredito.executeUpdate();
+
+                if (linhasCredito == 0) {
+                    throw new SQLException("Conta de destino não encontrada.");
+                }
+
+                conn.commit();
+                System.out.println("Transferência realizada com sucesso.");
+            } catch (SQLException e) {
+                conn.rollback();
+                System.out.println("Erro na transação. Realizado rollback: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
