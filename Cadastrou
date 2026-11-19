@@ -1,1 +1,72 @@
+package ProjetoPessoaMVC.controller;
+
+import ProjetoPessoaMVC.model.Pessoa;
+import ProjetoPessoaMVC.repository.PessoaRepository;
+import java.io.IOException;
+import java.util.*;
+
+public class PessoaController {
+    private final PessoaRepository repo = new PessoaRepository();
+
+    public boolean incluir(Pessoa nova) throws IOException {
+        if (repo.buscarPorId(nova.getId()) != null) {
+            return false;
+        }
+        repo.adicionar(nova);
+        repo.salvar();
+        return true;
+    }
+
+    public boolean excluir(int id) throws IOException {
+        boolean removida = repo.remover(id);
+        if (removida) {
+            repo.salvar();
+        }
+        return removida;
+    }
+
+    public boolean alterar(int id, Pessoa novosDados) throws IOException {
+        Pessoa existente = repo.buscarPorId(id);
+        if (existente == null) {
+            return false;
+        }
+        existente.setNome(novosDados.getNome());
+        existente.setIdade(novosDados.getIdade());
+        existente.setAltura(novosDados.getAltura());
+        repo.salvar();
+        return true;
+    }
+
+    public Pessoa consultar(int id) {
+        return repo.buscarPorId(id);
+    }
+
+    public List<Pessoa> listarOrdenado(String criterio) {
+        List<Pessoa> lista = repo.listarTodos();
+
+        switch (criterio.toLowerCase()) {
+            case "id":
+                lista.sort(Comparator.comparingInt(Pessoa::getId));
+                break;
+
+            case "nome":
+                lista.sort(Comparator.comparing(Pessoa::getNome));
+                break;
+
+            case "idade":
+                lista.sort(Comparator.comparingInt(Pessoa::getIdade));
+                break;
+
+            default:
+                System.out.println("Criterio invalido. A lista sera retornada sem ordenacao.");
+                break;
+        }
+
+        return lista;
+    }
+
+    public void salvar() throws IOException {
+        repo.salvar();
+    }
+}
 
