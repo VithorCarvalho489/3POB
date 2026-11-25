@@ -1,0 +1,441 @@
+Exercício 1: Estruturação Básica do DAO
+// 1. Modelo
+public class Aluno {
+    private Long id;
+    private String nome;
+    private String matricula;
+
+    public Aluno() {}
+    public Aluno(String nome, String matricula) {
+        this.nome = nome;
+        this.matricula = matricula;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getMatricula() { return matricula; }
+    public void setMatricula(String matricula) { this.matricula = matricula; }
+}
+
+// 2. Interface DAO
+import java.util.List;
+
+public interface AlunoDAO {
+    void inserir(Aluno aluno);
+    List<Aluno> listarTodos();
+}
+
+// 3. Implementação Concreta
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class AlunoDAOImpl implements AlunoDAO {
+    private final Connection connection;
+
+    public AlunoDAOImpl(Connection connection) {
+        this.connection = connection;
+    }
+
+    @Override
+    public void inserir(Aluno aluno) {
+        String sql = "INSERT INTO alunos (nome, matricula) VALUES (?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, aluno.getNome());
+            stmt.setString(2, aluno.getMatricula());
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    aluno.setId(rs.getLong(1));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao inserir aluno", e);
+        }
+    }
+
+    @Override
+    public List<Aluno> listarTodos() {
+        String sql = "SELECT id, nome, matricula FROM alunos";
+        List<Aluno> alunos = new ArrayList<>();
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Aluno aluno = new Aluno();
+                aluno.setId(rs.getLong("id"));
+                aluno.setNome(rs.getString("nome"));
+                aluno.setMatricula(rs.getString("matricula"));
+                alunos.add(aluno);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar alunos", e);
+        }
+        return alunos;
+    }
+}
+
+Exercício 2: CRUD Completo com Interface Genérica
+// 1. Modelo
+import java.math.BigDecimal;
+
+public class Produto {
+    private Long id;
+    private String descricao;
+    private BigDecimal precoUnitario;
+    private Integer quantidadeEstoque;
+
+    // Getters e Setters omitidos por brevidade (padrão JavaBean)
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public BigDecimal getPrecoUnitario() { return precoUnitario; }
+    public void setPrecoUnitario(BigDecimal precoUnitario) { this.precoUnitario = precoUnitario; }
+    public Integer getQuantidadeEstoque() { return quantidadeEstoque; }
+    public void setQuantidadeEstoque(Integer quantidadeEstoque) { this.quantidadeEstoque = quantidadeEstoque; }
+}
+
+// 2. Interface Genérica
+import java.util.List;
+import java.util.Optional;
+
+public interface GenericDAO<T, ID> {
+    void salvar(T entidade);
+    Optional<T> buscarPorId(ID id);
+    List<T> listarTodos();
+    void atualizar(T entidade);
+    void deletarPorId(ID id);
+}
+
+// 3. Implementação Concreta
+import java.sql.*;
+import java.util.*;
+
+public class ProdutoDAOImpl implements GenericDAO<Produto, Long> {
+    private final Connection connection;
+
+    public ProdutoDAOImpl(Connection connection) {
+        this.connection = connection;
+    }
+
+    @Override
+    public void salvar(Produto produto) {
+        String sql = "INSERT INTO produtos (descricao, preco_unitario, quantidade_estoque) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, produto.getDescricao());
+            stmt.setBigDecimal(2, produto.getPrecoUnitario());
+            stmt.setInt(3, produto.getQuantidadeEstoque());
+            stmt.executeUpdate();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) produto.setId(rs.getLong(1));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao salvar produto", e);
+        }
+    }
+
+    @Override
+    public Optional<Produto> buscarPorId(Long id) {
+        String sql = "SELECT * FROM produtos WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return Optional.of(mapear(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar produto por ID", e);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public List<Produto> listarTodos() {
+        String sql = "SELECT * FROM produtos";
+        List<Produto> lista = new ArrayList<>();
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) lista.add(mapear(rs));
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar produtos", e);
+        }
+        return lista;
+    }
+
+    @Override
+    public void atualizar(Produto produto) {
+        String sql = "UPDATE produtos SET descricao = ?, preco_unitario = ?, quantidade_estoque = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, produto.getDescricao());
+            stmt.setBigDecimal(2, produto.getPrecoUnitario());
+            stmt.setInt(3, produto.getQuantidadeEstoque());
+            stmt.setLong(4, produto.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar produto", e);
+        }
+    }
+
+    @Override
+    public void deletarPorId(Long id) {
+        String sql = "DELETE FROM produtos WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao deletar produto", e);
+        }
+    }
+
+    private Produto mapear(ResultSet rs) throws SQLException {
+        Produto p = new Produto();
+        p.setId(rs.getLong("id"));
+        p.setDescricao(rs.getString("descricao"));
+        p.setPrecoUnitario(rs.getBigDecimal("preco_unitario"));
+        p.setQuantidadeEstoque(rs.getInt("quantidade_estoque"));
+        return p;
+    }
+}
+
+Exercício 3: DAO com Consultas Customizadas e Paginação
+// 1. Modelo
+public class Livro {
+    private Long id;
+    private String titulo;
+    private String autor;
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+    public String getAutor() { return autor; }
+    public void setAutor(String autor) { this.autor = autor; }
+}
+
+// 2. Interface DAO
+import java.util.List;
+
+public interface LivroDAO {
+    List<Livro> buscarPaginado(int pagina, int tamanhoPagina);
+}
+
+// 3. Implementação Concreta (considerando página 1-based)
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class LivroDAOImpl implements LivroDAO {
+    private final Connection connection;
+
+    public LivroDAOImpl(Connection connection) {
+        this.connection = connection;
+    }
+
+    @Override
+    public List<Livro> buscarPaginado(int pagina, int tamanhoPagina) {
+        String sql = "SELECT id, titulo, autor FROM livros ORDER BY id LIMIT ? OFFSET ?";
+        List<Livro> livros = new ArrayList<>();
+        int offset = Math.max(0, (pagina - 1) * tamanhoPagina);
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, tamanhoPagina);
+            stmt.setInt(2, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Livro livro = new Livro();
+                    livro.setId(rs.getLong("id"));
+                    livro.setTitulo(rs.getString("titulo"));
+                    livro.setAutor(rs.getString("autor"));
+                    livros.add(livro);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar livros paginados", e);
+        }
+        return livros;
+    }
+}
+
+Exercício 4: Injeção de Dependência e Camada de Serviço
+// 1. Modelo
+public class Cliente {
+    private Long id;
+    private String nome;
+    private String email;
+    private String cpf;
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
+}
+
+// 2. Interface DAO
+import java.util.Optional;
+
+public interface ClienteDAO {
+    void salvar(Cliente cliente);
+    Optional<Cliente> buscarPorCpf(String cpf);
+}
+
+// 3. Camada de Serviço (Desacoplada)
+public class ClienteService {
+    private final ClienteDAO clienteDAO;
+
+    public ClienteService(ClienteDAO clienteDAO) {
+        this.clienteDAO = clienteDAO;
+    }
+
+    public void cadastrarCliente(Cliente cliente) {
+        if (cliente.getEmail() == null || cliente.getEmail().isBlank()) {
+            throw new IllegalArgumentException("O e-mail do cliente é obrigatório.");
+        }
+        if (cliente.getCpf() == null || cliente.getCpf().isBlank()) {
+            throw new IllegalArgumentException("O CPF do cliente é obrigatório.");
+        }
+        if (clienteDAO.buscarPorCpf(cliente.getCpf()).isPresent()) {
+            throw new IllegalStateException("Já existe um cliente cadastrado com este CPF.");
+        }
+
+        clienteDAO.salvar(cliente);
+    }
+}
+
+Exercício 5: Gerenciamento de Transação Unificada entre Múltiplos DAOs
+// 1. Modelos
+import java.math.BigDecimal;
+import java.util.List;
+
+public class Pedido {
+    private Long id;
+    private Long clienteId;
+    private BigDecimal valorTotal;
+    private List<ItemPedido> itens;
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Long getClienteId() { return clienteId; }
+    public void setClienteId(Long clienteId) { this.clienteId = clienteId; }
+    public BigDecimal getValorTotal() { return valorTotal; }
+    public void setValorTotal(BigDecimal valorTotal) { this.valorTotal = valorTotal; }
+    public List<ItemPedido> getItens() { return itens; }
+    public void setItens(List<ItemPedido> itens) { this.itens = itens; }
+}
+
+public class ItemPedido {
+    private Long id;
+    private Long pedidoId;
+    private Long produtoId;
+    private Integer quantidade;
+    private BigDecimal precoUnitario;
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Long getPedidoId() { return pedidoId; }
+    public void setPedidoId(Long pedidoId) { this.pedidoId = pedidoId; }
+    public Long getProdutoId() { return produtoId; }
+    public void setProdutoId(Long produtoId) { this.produtoId = produtoId; }
+    public Integer getQuantidade() { return quantidade; }
+    public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
+    public BigDecimal getPrecoUnitario() { return precoUnitario; }
+    public void setPrecoUnitario(BigDecimal precoUnitario) { this.precoUnitario = precoUnitario; }
+}
+
+// 2. Interfaces DAO
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+public interface PedidoDAO {
+    long criarPedido(Connection conn, Pedido pedido) throws SQLException;
+}
+
+public interface ItemPedidoDAO {
+    void salvarItens(Connection conn, long pedidoId, List<ItemPedido> itens) throws SQLException;
+}
+
+// 3. Implementações DAO
+import java.sql.*;
+import java.util.List;
+
+public class PedidoDAOImpl implements PedidoDAO {
+    @Override
+    public long criarPedido(Connection conn, Pedido pedido) throws SQLException {
+        String sql = "INSERT INTO pedidos (cliente_id, valor_total) VALUES (?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setLong(1, pedido.getClienteId());
+            stmt.setBigDecimal(2, pedido.getValorTotal());
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    long idGerado = rs.getLong(1);
+                    pedido.setId(idGerado);
+                    return idGerado;
+                }
+                throw new SQLException("Falha ao obter ID gerado do pedido.");
+            }
+        }
+    }
+}
+
+public class ItemPedidoDAOImpl implements ItemPedidoDAO {
+    @Override
+    public void salvarItens(Connection conn, long pedidoId, List<ItemPedido> itens) throws SQLException {
+        String sql = "INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            for (ItemPedido item : itens) {
+                stmt.setLong(1, pedidoId);
+                stmt.setLong(2, item.getProdutoId());
+                stmt.setInt(3, item.getQuantidade());
+                stmt.setBigDecimal(4, item.getPrecoUnitario());
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        }
+    }
+}
+
+// 4. Serviço Transacional (Unit of Work)
+import java.sql.Connection;
+import java.sql.SQLException;
+import javax.sql.DataSource;
+
+public class VendaService {
+    private final DataSource dataSource;
+    private final PedidoDAO pedidoDAO;
+    private final ItemPedidoDAO itemPedidoDAO;
+
+    public VendaService(DataSource dataSource, PedidoDAO pedidoDAO, ItemPedidoDAO itemPedidoDAO) {
+        this.dataSource = dataSource;
+        this.pedidoDAO = pedidoDAO;
+        this.itemPedidoDAO = itemPedidoDAO;
+    }
+
+    public void registrarVenda(Pedido pedido) {
+        try (Connection conn = dataSource.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                long pedidoId = pedidoDAO.criarPedido(conn, pedido);
+                itemPedidoDAO.salvarItens(conn, pedidoId, pedido.getItens());
+
+                conn.commit();
+            } catch (Exception e) {
+                conn.rollback();
+                throw new RuntimeException("Erro ao registrar venda. Transação revertida.", e);
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro de conexão com o banco de dados.", e);
+        }
+    }
+}
+
